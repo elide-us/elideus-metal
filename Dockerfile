@@ -1,4 +1,3 @@
-# Use Python with Ubuntu
 FROM python:3.12
 
 # Install FFmpeg
@@ -6,12 +5,19 @@ RUN apt-get update && apt-get install -y ffmpeg
 
 # Set up the FastAPI application
 WORKDIR /app
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-COPY . .
+
+# Copy everything, including startup.sh
+COPY . /app
+
+# Set virtual environment as the default Python environment
+ENV VIRTUAL_ENV=/app/venv
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # Expose the FastAPI port
 EXPOSE 8000
 
-# Run FastAPI
-CMD ["gunicorn", "-w", "1", "-k", "uvicorn.workers.UvicornWorker", "-b", "0.0.0.0:8000", "main:app"]
+# Ensure startup.sh is executable
+RUN chmod +x /app/startup.sh
+
+# Run the startup shell script
+CMD ["/bin/sh", "/app/startup.sh"]
