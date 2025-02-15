@@ -16,7 +16,7 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # Create virtual environment and install dependencies
 RUN python -m venv $VIRTUAL_ENV && \
-    source $VIRTUAL_ENV/bin/activate && \
+    . $VIRTUAL_ENV/bin/activate && \
     pip install --upgrade pip && \
     pip install -r requirements.txt
 
