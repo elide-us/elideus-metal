@@ -10,8 +10,15 @@ WORKDIR /app
 COPY . /app
 
 # Set virtual environment as the default Python environment
-ENV VIRTUAL_ENV=/app/venv
+ARG PYTHON_ENV=/app/venv
+ENV VIRTUAL_ENV=$PYTHON_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+
+# Create virtual environment and install dependencies
+RUN python -m venv $VIRTUAL_ENV && \
+    source $VIRTUAL_ENV/bin/activate && \
+    pip install --upgrade pip && \
+    pip install -r requirements.txt
 
 # Expose the FastAPI port
 EXPOSE 8000
