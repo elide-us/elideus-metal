@@ -65,6 +65,8 @@ jobs:
           push: true
           tags: elideus.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_31021cfb0928428e9dede9923d7bea14 }}/elideus-metal:${{ github.sha }}
           file: ./Dockerfile
+          build-args: |
+            PYTHON_ENV=/app/venv
 
   deploy:
     runs-on: ubuntu-latest
