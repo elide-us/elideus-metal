@@ -31,7 +31,7 @@ async def get_root():
     <html>
     <head>
       <meta charset="utf-8">
-      <title>Metal Emoji</title>
+      <title>Elideus-Metal</title>
       <style>
         html, body {{
           height: 100%;
