@@ -20,6 +20,7 @@ async def fetch_message():
   async with aiohttp.ClientSession() as session:
     async with session.get("http://127.0.0.1:8000/api/message") as response:
       data = await response.json()
+      data = json.loads(json}
       return data.get("message")
 
 @app.get("/")
