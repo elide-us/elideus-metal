@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, Request
+from fastapi import FastAPI, APIRouter, Request, HTMLResponse
 from contextlib import asynccontextmanager
 import aiohttp, json
 
@@ -53,4 +53,4 @@ async def get_root():
     </body>
     </html>
   """
-  return html
+  return HTMLResponse(content=html, media_type="text/html")
