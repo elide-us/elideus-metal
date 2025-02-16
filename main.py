@@ -1,6 +1,6 @@
 from fastapi import FastAPI, APIRouter, Request
 from contextlib import asynccontextmanager
-import aiohttp
+import aiohttp, json
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
