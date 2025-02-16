@@ -1,10 +1,10 @@
 from fastapi import FastAPI, APIRouter, Request
 from contextlib import asynccontextmanager
-import aiohttp, json
+import aiohttp
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-  app.state.message = "\\m/"
+  app.state.message = r"\m/"
   yield
 
 router = APIRouter()
@@ -20,7 +20,6 @@ async def fetch_message():
   async with aiohttp.ClientSession() as session:
     async with session.get("http://127.0.0.1:8000/api/message") as response:
       data = await response.json()
-      data = json.loads(json}
       return data.get("message")
 
 @app.get("/")
