@@ -26,32 +26,33 @@ async def fetch_message():
 @app.get("/")
 async def get_root():
   message = await fetch_message()
-  html = """
+  html = f"""
     <!DOCTYPE html>
     <html>
     <head>
       <meta charset="utf-8">
       <title>Metal Emoji</title>
       <style>
-        html, body {
-          bheight: 100%;
+        html, body {{
+          height: 100%;
           margin: 0;
-        }
-        body {
+        }}
+        body {{
           background-color: #333;
           color: black;
           display: flex;
           justify-content: center;
           align-items: center;
-        }
-        .message {
+        }}
+        .message {{
           font-size: 20vh;
-        }
+        }}
       </style>
     </head>
     <body>
-      <div class="message">{{message}}</div>
+      <div class="message">{message}</div>
     </body>
     </html>
   """
+
   return HTMLResponse(content=html, media_type="text/html")
