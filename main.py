@@ -65,6 +65,7 @@ async def get_root():
           background-color: #333;
           color: black;
           display: flex;
+          flex-direction: column;
           justify-content: center;
           align-items: center;
         }}
@@ -78,7 +79,7 @@ async def get_root():
       </style>
     </head>
     <body>
-      <div class="message">{message}</div><br>
+      <div class="message">{message}</div>
       <div class="version">{version}</div>
     </body>
     </html>
