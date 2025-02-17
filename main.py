@@ -78,7 +78,7 @@ async def get_root():
       </style>
     </head>
     <body>
-      <div class="message">{message}</div>
+      <div class="message">{message}</div><br>
       <div class="version">{version}</div>
     </body>
     </html>
