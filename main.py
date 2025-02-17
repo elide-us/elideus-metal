@@ -40,9 +40,16 @@ async def fetch_message():
       data = await response.json()
       return data.get("message")
 
+async def fetch_version():
+  async with aiohttp.ClientSession() as session:
+    async with session.get("http://127.0.0.1/api/ffmpeg") as response:
+      data = await response.json()
+      return data.get("ffmpeg_version")
+
 @app.get("/")
 async def get_root():
   message = await fetch_message()
+  version = await fetch_version()
   html = f"""
     <!DOCTYPE html>
     <html>
@@ -64,10 +71,15 @@ async def get_root():
         .message {{
           font-size: 20vh;
         }}
+        .version {{
+          font-size: 14;
+          color: #c1c1c1;
+        }}
       </style>
     </head>
     <body>
       <div class="message">{message}</div>
+      <div class="version">{version}</div>
     </body>
     </html>
   """
