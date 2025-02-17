@@ -42,7 +42,7 @@ async def fetch_message():
 
 async def fetch_version():
   async with aiohttp.ClientSession() as session:
-    async with session.get("http://127.0.0.1/api/ffmpeg") as response:
+    async with session.get("http://127.0.0.1:8000/api/ffmpeg") as response:
       data = await response.json()
       return data.get("ffmpeg_version")
 
