@@ -2,3 +2,4 @@ gunicorn
 uvicorn
 fastapi
 aiohttp
+atproto=0.0.59
