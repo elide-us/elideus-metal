@@ -1,11 +1,13 @@
 from fastapi import FastAPI, APIRouter, Request, HTTPException
 from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
 import aiohttp, asyncio
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
   app.state.message = r"\m/"
+  app.state.app_version = "0.0.2"
   app.state.hostname = "elideus.net"
   yield
 
@@ -34,6 +36,7 @@ async def get_ffmpeg():
 
 app = FastAPI(lifespan=lifespan)
 app.include_router(router, prefix="/api")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 async def fetch_message():
   async with aiohttp.ClientSession() as session:
@@ -51,7 +54,6 @@ async def fetch_version():
 async def get_root():
   message = await fetch_message()
   version = await fetch_version()
-  app_version = "0.0.1"
   html = f"""
     <!DOCTYPE html>
     <html>
@@ -83,7 +85,7 @@ async def get_root():
     <body>
       <div class="message">{message}</div>
       <div class="version">{version}</div>
-      <div class="version">{app_version}</div>
+      <div class="version">{app.state.app_version}</div>
     </body>
     </html>
   """
