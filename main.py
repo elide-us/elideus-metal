@@ -11,6 +11,7 @@ async def lifespan(app: FastAPI):
   app.state.message = r"\m/"
   app.state.app_version = config.VERSION
   app.state.hostname = config.HOSTNAME
+  app.state.service_did = config.SERVICE_DID
   yield
 
 router = APIRouter()
@@ -87,9 +88,23 @@ async def get_root():
     <body>
       <div class="message">{message}</div>
       <div class="version">{version}</div>
-      <div class="version">{app.state.app_version} on {app.state.hostname}</div>
+      <div class="version">at://{app.state.service_did} v{app.state.app_version} running on {app.state.hostname}</div>
     </body>
     </html>
   """
 
   return HTMLResponse(content=html, media_type="text/html")
+
+@app.get("/.well-known/did.json")
+async def get_well_known_did_json(request: Request):
+  return {
+    "@context": ["http://www.w3.org/ns/did/v1"],
+    "id": request.app.state.SERVICE_DID,
+    "service": [
+      {
+        "id": "#bsky_fg",
+        "type": "BskyFeedGenerator",
+        "serviceEndpoint": f"https://{request.app.state.HOSTNAME}"
+      }
+    ]
+  }
