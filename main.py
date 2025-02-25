@@ -79,9 +79,12 @@ async def get_root():
         .message {{
           font-size: 20vh;
         }}
-        .version {{
+        a, .version, .link {{
           font-size: 14;
           color: #c1c1c1;
+        }}
+        a, .link {{
+          font-decoration: none;
         }}
       </style>
     </head>
@@ -89,6 +92,7 @@ async def get_root():
       <div class="message">{message}</div>
       <div class="version">{version}</div>
       <div class="version">at://{app.state.service_did} v{app.state.app_version} running on {app.state.hostname}</div>
+      <div class="link"><a href="https://github.com/elide-us/elideus-metal">Repo</a></div>
     </body>
     </html>
   """
