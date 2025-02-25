@@ -79,14 +79,20 @@ async def get_root():
         .message {{
           font-size: 20vh;
         }}
-        .version .link a {{
+        .version {{
           font-size: 14;
           color: #c1c1c1;
         }}
-        .link a {{
+        .link {{
+          font-size: 14;
+          color: #c1c1c1;
+        }}
+        a {{
+          font-size: 14;
+          color: #c1c1c1;
           text-decoration: none;
         }}
-        .link a:hover {{
+        a:hover {{
           text-decoration: underline;
         }}
       </style>
