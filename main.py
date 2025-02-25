@@ -93,3 +93,17 @@ async def get_root():
   """
 
   return HTMLResponse(content=html, media_type="text/html")
+
+@app.get("/.well-known/did.json")
+async def get_well_known_did_json(request: Request):
+  return {
+    "@context": ["http://www.w3.org/ns/did/v1"],
+    "id": request.app.state.SERVICE_DID,
+    "service": [
+      {
+        "id": "#bsky_fg",
+        "type": "BskyFeedGenerator",
+        "serviceEndpoint": f"https://{request.app.state.HOSTNAME}"
+      }
+    ]
+  }
