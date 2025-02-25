@@ -11,6 +11,7 @@ async def lifespan(app: FastAPI):
   app.state.message = r"\m/"
   app.state.app_version = config.VERSION
   app.state.hostname = config.HOSTNAME
+  app.state.service_did = config.SERVICE_DID
   yield
 
 router = APIRouter()
@@ -87,7 +88,7 @@ async def get_root():
     <body>
       <div class="message">{message}</div>
       <div class="version">{version}</div>
-      <div class="version">{app.state.app_version} on {app.state.hostname}</div>
+      <div class="version">at://{app.state.service_did} v{app.state.app_version} running on {app.state.hostname}</div>
     </body>
     </html>
   """
