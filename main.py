@@ -4,10 +4,12 @@ from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
 import aiohttp, asyncio
 
+import globals
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
   app.state.message = r"\m/"
-  app.state.app_version = "0.0.2"
+  app.state.app_version = globals.VERSION
   app.state.hostname = "elideus.net"
   yield
 
