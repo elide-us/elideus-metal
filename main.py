@@ -6,6 +6,7 @@ import aiohttp, asyncio
 @asynccontextmanager
 async def lifespan(app: FastAPI):
   app.state.message = r"\m/"
+  app.state.hostname = "elideus.net"
   yield
 
 router = APIRouter()
