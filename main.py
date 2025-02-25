@@ -3,20 +3,10 @@ from fastapi.responses import HTMLResponse
 from contextlib import asynccontextmanager
 import aiohttp, asyncio
 
-
-
-
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
   app.state.message = r"\m/"
-  app.state.HOSTNAME = "elideus.net"
-  app.state.SERVICE_DID = "did:web:elideus.net"
   yield
-
-
-
-
 
 router = APIRouter()
 
@@ -41,32 +31,8 @@ async def get_ffmpeg():
   except Exception as e:
     raise HTTPException(status_code=500, detail="Error checking ffmpeg: {e}")
 
-
-
-
-
-
-
 app = FastAPI(lifespan=lifespan)
 app.include_router(router, prefix="/api")
-
-@app.get("/.well-known/did.json")
-async def get_well_known_did_json(request: Request):
-  return {
-    "@context": ["http://www.w3.org/ns/did/v1"],
-    "id": request.app.state.SERVICE_DID,
-    "service": [
-      {
-        "id": "#bsky_fg",
-        "type": "BskyFeedGenerator",
-        "serviceEndpoint": f"https://{request.app.state.HOSTNAME}"
-      }
-    ]
-  }
-
-
-
-
 
 async def fetch_message():
   async with aiohttp.ClientSession() as session:
@@ -80,17 +46,11 @@ async def fetch_version():
       data = await response.json()
       return data.get("ffmpeg_version")
 
-
-
-
-
-
-
-
 @app.get("/")
 async def get_root():
   message = await fetch_message()
   version = await fetch_version()
+  app_version = "0.0.1"
   html = f"""
     <!DOCTYPE html>
     <html>
@@ -122,6 +82,7 @@ async def get_root():
     <body>
       <div class="message">{message}</div>
       <div class="version">{version}</div>
+      <div class="version">{app_version}</div>
     </body>
     </html>
   """
