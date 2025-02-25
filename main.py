@@ -100,8 +100,8 @@ async def get_root():
     <body>
       <div class="message">{message}</div>
       <div class="version">{version}</div>
-      <div class="version">at://{app.state.service_did} v{app.state.app_version} running on {app.state.hostname}</div>
-      <div class="link"><a href="https://github.com/elide-us/elideus-metal" target=_blank" rel="noopener noreferrer">repo</a></div>
+      <div class="version"><a href="/.well-known/did.json">at://{app.state.service_did}</a> v{app.state.app_version} running on {app.state.hostname}</div>
+      <div class="link">GitHub: <a href="https://github.com/elide-us/elideus-metal" target="_blank" rel="noopener noreferrer">repo</a> - <a href="https://github.com/elide-us/elideus-metal/actions" target="_blank" rel="noopener noreferrer">build</a></div>
     </body>
     </html>
   """
