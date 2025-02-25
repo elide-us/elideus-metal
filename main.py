@@ -4,13 +4,13 @@ from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
 import aiohttp, asyncio
 
-import globals
+import config
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
   app.state.message = r"\m/"
-  app.state.app_version = globals.VERSION
-  app.state.hostname = "elideus.net"
+  app.state.app_version = config.VERSION
+  app.state.hostname = config.HOSTNAME
   yield
 
 router = APIRouter()
@@ -87,7 +87,7 @@ async def get_root():
     <body>
       <div class="message">{message}</div>
       <div class="version">{version}</div>
-      <div class="version">{app.state.app_version}</div>
+      <div class="version">{app.state.app_version} on {app.state.hostname}</div>
     </body>
     </html>
   """
