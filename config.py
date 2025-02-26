@@ -24,7 +24,7 @@ SERVICE_DID = _get_str_env_var("SERVICE_DID")
 if not SERVICE_DID:
     SERVICE_DID = f"did:web:{HOSTNAME}"
 
-FEED_URI = _get_str_env_var("FEED_URI")
+FEED_URI = _get_str_env_var("MY_FEED_URI")
 if not FEED_URI:
     raise RuntimeError("Publish your feed first (run publish_feed.py) to obtain Feed URI. Set 'FEED_URI' environment variable to the provided URI.")
 
