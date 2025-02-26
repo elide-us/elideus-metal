@@ -37,7 +37,7 @@ def SetupAPIRouter(app: FastAPI, router: APIRouter):
     except Exception as e:
       raise HTTPException(status_code=500, detail="Error checking ffmpeg: {e}")
 
-  app.include_router(router, profix="/api")
+  app.include_router(router, prefix="/api")
 
 def SetupFastAPI(app: FastAPI):
   @app.get("/")
