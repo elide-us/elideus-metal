@@ -16,7 +16,9 @@ async def lifespan(app: FastAPI):
   app.state.pool = await asyncpg.create_pool(config.DATABASE_URL)
   app.state.did_cache = DidInMemoryCache()
   app.state.id_resolver = IdResolver(cache=app.state.did_cache)
-  app.state.algos = {config.FEED_URI: handler}
+  app.state.algos = {
+    config.FEED_URI: handler
+  }
 
   await database.maybe_create_tables(app)
 
