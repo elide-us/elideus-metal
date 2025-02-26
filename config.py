@@ -1,6 +1,6 @@
 import os
 
-VERSION = "0.0.9"
+VERSION = "0.0.10"
 
 def _get_str_env_var(var_name: str) -> str:
   value = os.getenv(var_name)
@@ -18,7 +18,7 @@ def _get_bool_env_var(var_name: str) -> bool:
 
 HOSTNAME = _get_str_env_var("HOSTNAME")
 if not HOSTNAME:
-    raise RuntimeError("You must set 'HOSTNAME' environment variable first.")
+    raise RuntimeError("You must set 'HOSTNAME' environment variable.")
 
 SERVICE_DID = _get_str_env_var("SERVICE_DID")
 if not SERVICE_DID:
@@ -30,3 +30,7 @@ if not FEED_URI:
 
 IGNORE_ARCHIVED_POSTS = _get_bool_env_var("IGNORE_ARCHIVED_POSTS")
 IGNORE_REPLY_POSTS = _get_bool_env_var("IGNORE_REPLY_POSTS")
+
+DATABASE_URL = _get_str_env_var("DATABASE_URL")
+if not DATABASE_URL:
+   raise RuntimeError("You must set 'DATABASE_URL' environment variable.")
