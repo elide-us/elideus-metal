@@ -14,7 +14,7 @@ async def _fetch_version():
       data = await response.json()
       return data.get("ffmpeg_version")
 
-async def SetupWebRoutes(app: FastAPI):
+def SetupWebRoutes(app: FastAPI):
   @app.get("/")
   async def get_root():
     message = await _fetch_message()
