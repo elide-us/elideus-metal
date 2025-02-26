@@ -1,6 +1,6 @@
 import os
 
-VERSION = "0.0.11"
+VERSION = "0.0.12"
 
 def _get_str_env_var(var_name: str) -> str:
   value = os.getenv(var_name)

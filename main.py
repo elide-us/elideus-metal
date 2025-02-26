@@ -5,6 +5,7 @@ from contextlib import asynccontextmanager
 from atproto import DidInMemoryCache, IdResolver
 from routes.web import SetupWebRoutes
 from routes.api import router
+from algos.feed import handler
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -15,8 +16,8 @@ async def lifespan(app: FastAPI):
   app.state.pool = await asyncpg.create_pool(config.DATABASE_URL)
   app.state.did_cache = DidInMemoryCache()
   app.state.id_resolver = IdResolver(cache=app.state.did_cache)
+  app.state.algos = {config.FEED_URI: handler}
 
-  # Check if tables exist and create if not
   await database.maybe_create_tables(app)
 
   try:
