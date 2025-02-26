@@ -1,10 +1,8 @@
 import asyncpg, config, database
-from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
+from fastapi import FastAPI, APIRouter
 from contextlib import asynccontextmanager
 from atproto import DidInMemoryCache, IdResolver
-from routes.web import SetupWebRoutes
-from routes.api import router
+from router import SetupFastAPI, SetupAPIRouter
 from algos.feed import handler
 
 @asynccontextmanager
@@ -27,8 +25,8 @@ async def lifespan(app: FastAPI):
   finally:
     app.state.pool.close()
 
+# The following "app" object is the WSGI entry point for the service
 app = FastAPI(lifespan=lifespan)
-app.include_router(router, prefix="/api")
-app.mount("/static", StaticFiles(directory="static"), name="static")
-
-SetupWebRoutes(app)
+router = APIRouter()
+SetupAPIRouter(app, router)
+SetupFastAPI(app)
