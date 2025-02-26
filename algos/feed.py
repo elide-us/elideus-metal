@@ -4,6 +4,8 @@ from database import PostModel as Post
 
 CURSOR_EOF = 'eof'
 
+## Multiple handlers can be defined here, connect algos to config.FEED_URIs (dispatcher)
+
 def handler(cursor: Optional[str], limit: int) -> dict:
   posts = Post.select().order_by(Post.cid.desc()).order_by(Post.indexed_at.desc()).limit(limit)
   ## posts = database call needs to be updated...
