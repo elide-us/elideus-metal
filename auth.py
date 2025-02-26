@@ -1,14 +1,10 @@
-from atproto import DidInMemoryCache, IdResolver, verify_jwt
+from fastapi import FastAPI, Request, HTTPException
+from atproto import IdResolver, verify_jwt
 from atproto.exceptions import TokenInvalidSignatureError
-from fastapi import Request, HTTPException
 
-_CACHE = DidInMemoryCache()
-_ID_RESOLVER = IdResolver(cache=_CACHE)
-
-_AUTHORIZATION_HEADER_NAME = 'Authorization'
-_AUTHORIZATION_HEADER_VALUE_PREFIX = 'Bearer '
-
-def validate_auth(request: Request) -> str:
+def validate_auth(app: FastAPI, request: Request) -> str:
+  _PREFIX = "Bearer "
+  _ID_RESOLVER: IdResolver = app.state.id_resolver
   """Validate authorization header.
 
   Args:
@@ -20,14 +16,14 @@ def validate_auth(request: Request) -> str:
   Raises:
     HTTPException: If the authorization header is missing or invalid.
   """
-  auth_header = request.headers.get(_AUTHORIZATION_HEADER_NAME)
+  auth_header = request.headers.get("Authorization")
   if not auth_header:
-    raise HTTPException(status_code=401, detail='Authorization header is missing')
+    raise HTTPException(status_code=401, detail="Authorization header is missing")
 
-  if not auth_header.startswith(_AUTHORIZATION_HEADER_VALUE_PREFIX):
-    raise HTTPException(status_code=401, detail='Invalid authorization header')
+  if not auth_header.startswith(_PREFIX):
+    raise HTTPException(status_code=401, detail="Invalid authorization header")
 
-  jwt = auth_header[len(_AUTHORIZATION_HEADER_VALUE_PREFIX):].strip()
+  jwt = auth_header[len(_PREFIX):].strip()
 
   try:
     return verify_jwt(jwt, _ID_RESOLVER.did.resolve_atproto_key).iss

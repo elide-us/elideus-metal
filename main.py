@@ -2,9 +2,10 @@ from fastapi import FastAPI, APIRouter, Request, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
-import aiohttp, asyncio
+from atproto import DidInMemoryCache, IdResolver
+import aiohttp, asyncio, asyncpg
+import config, database, auth
 
-import config
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -12,7 +13,17 @@ async def lifespan(app: FastAPI):
   app.state.app_version = config.VERSION
   app.state.hostname = config.HOSTNAME
   app.state.service_did = config.SERVICE_DID
-  yield
+  app.state.pool = await asyncpg.create_pool(config.DATABASE_URL)
+  app.state.did_cache = DidInMemoryCache()
+  app.state.id_resolver = IdResolver(cache=app.state.did_cache)
+
+  # Check if tables exist and create if not
+  await database.maybe_create_tables(app)
+
+  try:
+    yield
+  finally:
+    app.state.pool.close()
 
 router = APIRouter()
 
