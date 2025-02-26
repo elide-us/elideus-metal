@@ -1,6 +1,7 @@
 import aiohttp
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
+from algos import algos
 
 async def _fetch_message():
   async with aiohttp.ClientSession() as session:
@@ -83,3 +84,15 @@ def SetupWebRoutes(app: FastAPI):
         }
       ]
     }
+
+  @app.get("/xrpc/app.bsky.feed.describeFeedGenerator")
+  async def get_xrpc_app_bsky_feed_describeFeedGenerator(request: Request):
+    feeds = [{"uri": uri} for uri in algos.keys()]
+    response = {
+      "encoding": "application/json",
+      "body": {
+        "did": request.app.state.service_did,
+        "feeds": feeds
+      }
+    }
+    return response
