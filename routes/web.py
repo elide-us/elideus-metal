@@ -87,7 +87,7 @@ def SetupWebRoutes(app: FastAPI):
 
   @app.get("/xrpc/app.bsky.feed.describeFeedGenerator")
   async def get_xrpc_app_bsky_feed_describeFeedGenerator(request: Request):
-    feeds = [{"uri": uri} for uri in algos.keys()]
+    feeds = [{"uri": uri} for uri in request.app.state.algos.keys()]
     response = {
       "encoding": "application/json",
       "body": {
