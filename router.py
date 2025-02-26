@@ -3,6 +3,7 @@ from fastapi import FastAPI, APIRouter, Request, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
+# Yes, these routes are silly, they're here to demonstrate the pattern...
 async def _fetch_message():
   async with aiohttp.ClientSession() as session:
     async with session.get("http://127.0.0.1:8000/api/message") as response:
@@ -15,6 +16,7 @@ async def _fetch_version():
       data = await response.json()
       return data.get("ffmpeg_version")
 
+# Back end routes under /api/...
 def SetupAPIRouter(app: FastAPI, router: APIRouter):
   @router.get("/message")
   async def get_message(request: Request):
@@ -39,6 +41,7 @@ def SetupAPIRouter(app: FastAPI, router: APIRouter):
 
   app.include_router(router, prefix="/api")
 
+# Front end routes from /...
 def SetupFastAPI(app: FastAPI):
   @app.get("/")
   async def get_root():
@@ -121,4 +124,7 @@ def SetupFastAPI(app: FastAPI):
     }
     return response
   
+  # Mount static folder
   app.mount("/static", StaticFiles(directory="static"), name="static")
+  
+  
