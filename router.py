@@ -1,6 +1,7 @@
-import aiohttp
-from fastapi import FastAPI, Request
+import aiohttp, asyncio
+from fastapi import FastAPI, APIRouter, Request, HTTPException
 from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
 
 async def _fetch_message():
   async with aiohttp.ClientSession() as session:
@@ -14,7 +15,31 @@ async def _fetch_version():
       data = await response.json()
       return data.get("ffmpeg_version")
 
-def SetupWebRoutes(app: FastAPI):
+def SetupAPIRouter(app: FastAPI, router: APIRouter):
+  @router.get("/message")
+  async def get_message(request: Request):
+    return {"message": request.app.state.message}
+
+  @router.get("/ffmpeg")
+  async def get_ffmpeg():
+    try:
+      process = await asyncio.create_subprocess_exec(
+        "ffmpeg", "-version",
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE
+      )
+      stdout, stderr = await process.communicate()
+      if stdout:
+        version_line = stdout.decode().splitlines()[0]
+      else:
+        version_line = stderr.decode().splitlines()[0]
+      return {"ffmpeg_version": version_line}
+    except Exception as e:
+      raise HTTPException(status_code=500, detail="Error checking ffmpeg: {e}")
+
+  app.include_router(router, profix="/api")
+
+def SetupFastAPI(app: FastAPI):
   @app.get("/")
   async def get_root():
     message = await _fetch_message()
@@ -95,3 +120,5 @@ def SetupWebRoutes(app: FastAPI):
       }
     }
     return response
+  
+  app.mount("/static", StaticFiles(directory="static"), name="static")
