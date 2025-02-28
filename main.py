@@ -2,7 +2,7 @@ import asyncpg, config, database, asyncio
 from fastapi import FastAPI, APIRouter
 from contextlib import asynccontextmanager
 from atproto import DidInMemoryCache, IdResolver
-from router import SetupFastAPI, SetupAPIRouter
+from routes import SetupFastAPI, SetupAPIRouter
 from algos.feed import handler
 from data_stream import sip
 from data_filter import operations_callback
