@@ -37,7 +37,7 @@ def _get_ops_by_type(commit: models.ComAtprotoSyncSubscribeRepos.Commit) -> defa
       operations_by_type[uri.collection]['deleted'].append({'uri': str(uri)})
   return operations_by_type
 
-async def run(name: str, operations_callback, app: FastAPI, stream_stop_event: asyncio.Event) -> None:
+async def sip(name: str, operations_callback, app: FastAPI, stream_stop_event: asyncio.Event) -> None:
   while not stream_stop_event.is_set():
     try:
       await _run(name, operations_callback, app, stream_stop_event)
@@ -59,12 +59,12 @@ async def _run(name: str, operations_callback, app: FastAPI, stream_stop_event: 
       commit = parse_subscribe_repos_message(message)
       if not isinstance(commit, models.ComAtprotoSyncSubscribeRepos.Commit):
         return
-      if commit.seq % 1000 == 0:
+      if commit.seq % 100 == 0:
         client.update_params(models.ComAtprotoSyncSubscribeRepos.Params(cursor=commit.seq))
         async with app.state.pool.acquire() as conn:
           await conn.execute("UPDATE subscription_state SET cursor = $1 WHERE service = $2;", commit.seq, name)
-        client.stop()
         stream_stop_event.set()
+        client.stop()
         return
       if not commit.blocks:
         return

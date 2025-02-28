@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 from atproto import DidInMemoryCache, IdResolver
 from router import SetupFastAPI, SetupAPIRouter
 from algos.feed import handler
-from data_stream import run
+from data_stream import sip
 from data_filter import operations_callback
 
 @asynccontextmanager
@@ -21,7 +21,7 @@ async def lifespan(app: FastAPI):
   }
   app.state.feed_stop_event = asyncio.Event()
   app.state.feed_task = asyncio.create_task(
-    run("elideus_feed_generator", operations_callback, app, app.state.feed_stop_event)
+    sip("elideus_feed_generator", operations_callback, app, app.state.feed_stop_event)
   )
 
   await database.maybe_create_tables(app)
