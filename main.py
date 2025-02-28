@@ -4,8 +4,8 @@ from contextlib import asynccontextmanager
 from atproto import DidInMemoryCache, IdResolver
 from router import SetupFastAPI, SetupAPIRouter
 from algos.feed import handler
-# from data_stream import run
-# from data_filter import operations_callback
+from data_stream import run
+from data_filter import operations_callback
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -19,17 +19,17 @@ async def lifespan(app: FastAPI):
   app.state.algos = {
     config.FEED_URI: handler
   }
-  # app.state.feed_stop_event = asyncio.Event()
-  # app.state.feed_task = asyncio.create_task(
-  #   run("my_service", operations_callback, app, app.state.feed_stop_event)
-  # )
+  app.state.feed_stop_event = asyncio.Event()
+  app.state.feed_task = asyncio.create_task(
+    run("elideus_feed_generator", operations_callback, app, app.state.feed_stop_event)
+  )
 
   await database.maybe_create_tables(app)
 
   try:
     yield
   finally:
-    app.state.pool.close()
+    await app.state.pool.close()
 
 # The following "app" object is the WSGI entry point for the service
 app = FastAPI(lifespan=lifespan)

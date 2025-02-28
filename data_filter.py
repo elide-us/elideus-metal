@@ -40,17 +40,14 @@ def pack_post(created_post: defaultdict, record: "models.AppBskyFeedPost.Record"
 async def operations_callback(ops: defaultdict, app: FastAPI) -> None:
   posts_to_create = []
   posts_to_delete = []
-
   for created_post in ops[models.ids.AppBskyFeedPost]['created']:
     record = created_post['record']
     if maybe_ignore_post(record):
       continue
     if "python" in record.text.lower():
       posts_to_create.append(pack_post(created_post, record))
-
   deleted_posts = ops[models.ids.AppBskyFeedPost]['deleted']
   posts_to_delete = [post["uri"] for post in deleted_posts] if deleted_posts else []
-
   async with app.state.pool.acquire() as conn:
     query_insert = """
       INSERT INTO posts (uri, cid, reply_parent, reply_root)
