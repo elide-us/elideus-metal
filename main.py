@@ -19,6 +19,7 @@ async def lifespan(app: FastAPI):
   app.state.algos = {
     config.FEED_URI: handler
   }
+  print("Setting up asyncio feed generator task")
   app.state.feed_stop_event = asyncio.Event()
   app.state.feed_task = asyncio.create_task(
     sip("elideus_feed_generator", operations_callback, app, app.state.feed_stop_event)
