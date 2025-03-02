@@ -1,7 +1,7 @@
 import os
 
-import dotenv
-dotenv.load_dotenv()
+# import dotenv
+# dotenv.load_dotenv()
 
 VERSION = "0.1.0"
 
