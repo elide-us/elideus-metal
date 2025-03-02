@@ -1,7 +1,7 @@
 import datetime, config
 from collections import defaultdict
 from atproto import models
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from fastapi import FastAPI
 
 def post_is_archive(record: "models.AppBskyFeedPost.Record", threshold: int = 1) -> bool:
@@ -13,7 +13,7 @@ def post_is_archive(record: "models.AppBskyFeedPost.Record", threshold: int = 1)
   # your filter conditions, and adjust the threshold to your liking.
   archived_threadshold = timedelta(days=threshold)
   created_at = datetime.fromisoformat(record.created_at)
-  now = datetime.now(datetime.UTC)
+  now = datetime.now(timezone.utc)
   return now - created_at > archived_threadshold
 
 def maybe_ignore_post(record: "models.AppBskyFeedPost.Record") -> bool:
@@ -40,17 +40,14 @@ def pack_post(created_post: defaultdict, record: "models.AppBskyFeedPost.Record"
 async def operations_callback(ops: defaultdict, app: FastAPI) -> None:
   posts_to_create = []
   posts_to_delete = []
-
   for created_post in ops[models.ids.AppBskyFeedPost]['created']:
     record = created_post['record']
     if maybe_ignore_post(record):
       continue
-    if "python" in record.text.lower():
+    if "feet" in record.text.lower():
       posts_to_create.append(pack_post(created_post, record))
-
   deleted_posts = ops[models.ids.AppBskyFeedPost]['deleted']
   posts_to_delete = [post["uri"] for post in deleted_posts] if deleted_posts else []
-
   async with app.state.pool.acquire() as conn:
     query_insert = """
       INSERT INTO posts (uri, cid, reply_parent, reply_root)

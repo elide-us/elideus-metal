@@ -1,6 +1,9 @@
 import os
 
-VERSION = "0.0.15"
+import dotenv
+dotenv.load_dotenv()
+
+VERSION = "0.1.0"
 
 def _get_str_env_var(var_name: str) -> str:
   value = os.getenv(var_name)
