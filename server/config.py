@@ -1,15 +1,13 @@
-import os
+import os, dotenv
 
-# import dotenv
-# dotenv.load_dotenv()
+dotenv.load_dotenv()
 
-VERSION = "0.1.0"
-
-def _get_str_env_var(var_name: str) -> str:
+def _get_str_env_var(var_name: str, default: str | None = None) -> str:
   value = os.getenv(var_name)
   if not value:
     raise RuntimeError(f"ERROR: {var_name} missing.")
   return value
+
 def _get_bool_env_var(var_name: str) -> bool:
   value = os.getenv(var_name)
   if value is None:
@@ -19,13 +17,13 @@ def _get_bool_env_var(var_name: str) -> bool:
      return True
   return False
 
+VERSION = _get_str_env_var("VERSION")
+
 HOSTNAME = _get_str_env_var("HOSTNAME")
 if not HOSTNAME:
     raise RuntimeError("You must set 'HOSTNAME' environment variable.")
 
-SERVICE_DID = _get_str_env_var("SERVICE_DID")
-if not SERVICE_DID:
-    SERVICE_DID = f"did:web:{HOSTNAME}"
+SERVICE_DID = _get_str_env_var("SERVICE_DID", f"did:web:{HOSTNAME}")
 
 FEED_URI = _get_str_env_var("MY_FEED_URI")
 if not FEED_URI:

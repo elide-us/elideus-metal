@@ -142,6 +142,7 @@ dmypy.json
 
 # production
 /build
+/static
 /dist
 /dist-ssr
 *.local

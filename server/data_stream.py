@@ -1,7 +1,7 @@
 import asyncio
 from fastapi import FastAPI
 from collections import defaultdict
-from atproto import AtUri, CAR, firehose_models, FirehoseSubscribeReposClient, models, parse_subscribe_repos_message, AsyncFirehoseSubscribeReposClient
+from atproto import AtUri, CAR, firehose_models,models, parse_subscribe_repos_message, AsyncFirehoseSubscribeReposClient
 from atproto.exceptions import FirehoseError
 
 _INTERESTED_RECORDS = {
