@@ -1,8 +1,8 @@
 FROM node:18 AS react-build
 
-WORKDIR /app
+WORKDIR /react
 
-COPY . /app
+COPY . /react
 
 RUN npm ci
 RUN npm run lint && npm run type-check && npm run build
@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y ffmpeg
 WORKDIR /app
 
 COPY . /app
-COPY --from=react-build /app/static /app/static
+COPY --from=react-build /react/static /app/static
 
 ARG PYTHON_ENV=/venv
 ENV VIRTUAL_ENV=$PYTHON_ENV
