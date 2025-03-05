@@ -27,6 +27,6 @@ RUN python -m venv $VIRTUAL_ENV && \
 
 EXPOSE 8000
 
-RUN chmod +x /startup.sh
+RUN chmod +x /app/startup.sh
 
-CMD ["/bin/sh", "/startup.sh"]
+CMD ["/bin/sh", "/app/startup.sh"]
