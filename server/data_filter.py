@@ -1,4 +1,4 @@
-import datetime, config
+import datetime, server.config as config
 from collections import defaultdict
 from atproto import models
 from datetime import datetime, timedelta, timezone
