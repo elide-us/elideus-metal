@@ -1,20 +1,12 @@
-FROM node:18 AS react-build
-
-WORKDIR /react
-
-COPY . /react
-
-RUN npm ci
-RUN npm run lint && npm run type-check && npm run build
-
 FROM python:3.12
 
 RUN apt-get update && apt-get install -y ffmpeg
 
-WORKDIR /app
+WORKDIR /
 
-COPY . /app
-COPY --from=react-build /react/static /app/static
+COPY . .
+
+RUN npm ci && npm run lint && npm run type-check && npm run build
 
 ARG PYTHON_ENV=/venv
 ENV VIRTUAL_ENV=$PYTHON_ENV
@@ -27,6 +19,6 @@ RUN python -m venv $VIRTUAL_ENV && \
 
 EXPOSE 8000
 
-RUN chmod +x /app/startup.sh
+RUN chmod +x /startup.sh
 
-CMD ["/bin/sh", "/app/startup.sh"]
+CMD ["/bin/sh", "/startup.sh"]
