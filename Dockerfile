@@ -1,4 +1,4 @@
-FROM node:18 as react-build
+FROM node:18 AS react-build
 
 WORKDIR /
 
