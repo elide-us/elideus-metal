@@ -11,10 +11,10 @@ FROM python:3.12
 
 RUN apt-get update && apt-get install -y ffmpeg
 
-WORKDIR /
+WORKDIR /app
 
-COPY . .
-COPY --from=react-build /static /static
+COPY . /app
+COPY --from=react-build /static /app/static
 
 ARG PYTHON_ENV=/venv
 ENV VIRTUAL_ENV=$PYTHON_ENV
