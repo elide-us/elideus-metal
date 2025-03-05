@@ -1,30 +1,32 @@
-FROM python:3.12
+FROM node:18 as react-build
 
-# Install FFmpeg
-RUN apt-get update && apt-get install -y ffmpeg
-
-# Set up the FastAPI application
 WORKDIR /
 
-# Copy everything, including startup.sh
 COPY . .
 
-# Set virtual environment as the default Python environment
+RUN npm ci
+RUN npm run lint && npm run type-check && npm run build
+
+FROM python:3.12
+
+RUN apt-get update && apt-get install -y ffmpeg
+
+WORKDIR /
+
+COPY . .
+COPY --from=react-build /static /static
+
 ARG PYTHON_ENV=/venv
 ENV VIRTUAL_ENV=$PYTHON_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
-# Create virtual environment and install dependencies
 RUN python -m venv $VIRTUAL_ENV && \
     . $VIRTUAL_ENV/bin/activate && \
     pip install --upgrade pip && \
     pip install --requirement requirements.txt
 
-# Expose the FastAPI port
 EXPOSE 8000
 
-# Ensure startup.sh is executable
 RUN chmod +x /startup.sh
 
-# Run the startup shell script
 CMD ["/bin/sh", "/startup.sh"]

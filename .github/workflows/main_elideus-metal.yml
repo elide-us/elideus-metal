@@ -13,13 +13,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Build React Frontend
-      run: |
-        npm ci
-        npm run lint
-        npm run type-check
-        npm run build
-
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
 
