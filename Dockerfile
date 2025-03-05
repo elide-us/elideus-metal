@@ -11,6 +11,7 @@ RUN npm run lint && npm run type-check && npm run build
 # At this point, the build output is generated.
 # Assuming your React build outputs to a folder named "static" in /app
 RUN ls -la /app
+RUN ls -la /app/static
 # Stage 2: Build the final image with Python
 FROM python:3.12
 # Install system dependencies (curl, ffmpeg) and Node if needed
@@ -23,6 +24,7 @@ COPY . .
 # Overwrite (or add) the built React assets from the previous stage
 COPY --from=react-build /app/static /app/static
 RUN ls -la /app
+RUN ls -la /app/static
 # Set up the Python virtual environment
 ARG PYTHON_ENV=/app/venv
 ENV VIRTUAL_ENV=$PYTHON_ENV
