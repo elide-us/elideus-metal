@@ -4,8 +4,6 @@ RUN apt-get update && apt-get install -y ffmpeg
 
 WORKDIR /app
 
-RUN ls -al /
-
 COPY . /app
 
 RUN ls -al /app
