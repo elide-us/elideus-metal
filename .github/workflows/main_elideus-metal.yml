@@ -16,7 +16,7 @@ jobs:
 
     - name: Vite Build React Web App
       run: |
-        cd react
+        cd frontend
         npm ci
         npm run lint
         npm run type-check
