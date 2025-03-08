@@ -4,9 +4,11 @@ RUN apt-get update && apt-get install -y ffmpeg
 
 WORKDIR /app
 
-RUN ls -al .
+RUN ls -al /
 
 COPY . /app
+
+RUN ls -al /app
 
 ARG PYTHON_ENV=/app/venv
 ENV VIRTUAL_ENV=$PYTHON_ENV
