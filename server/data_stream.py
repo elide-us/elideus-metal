@@ -72,7 +72,7 @@ async def _run(name: str, operations_callback, app: FastAPI, stream_stop_event: 
     print(f"Parsing commit {commit}")
     if not isinstance(commit, models.ComAtprotoSyncSubscribeRepos.Commit):
       return
-    if commit.seq % 20 == 0:
+    if commit.seq % 1 == 0:
       client.update_params(models.ComAtprotoSyncSubscribeRepos.Params(cursor=commit.seq))
       print("Updating cursor in database")
       async with app.state.pool.acquire() as conn:

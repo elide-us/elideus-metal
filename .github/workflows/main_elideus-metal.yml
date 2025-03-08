@@ -22,17 +22,6 @@ jobs:
         npm run type-check
         npm run build
 
-    # - name: Package Python and React Web App
-    #   run: |
-    #     zip ./release.zip ./* -r -x "venv/*"
-
-    # - name: Stage Release Package
-    #   uses: actions/upload-artifact@v4
-    #   with:
-    #     name: react-app
-    #     path: |
-    #       release.zip
-
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
 
