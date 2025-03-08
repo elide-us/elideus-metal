@@ -1,0 +1,7 @@
+.github
+.vscode
+.env
+.env.example
+.gitignore
+devstart.cmd
+react

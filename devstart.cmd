@@ -1,4 +1,5 @@
 @ECHO OFF
+CD react
 CALL npm run lint
 IF ERRORLEVEL 1 (
     ECHO "npm run lint failed. Exiting."
@@ -13,4 +14,5 @@ IF ERRORLEVEL 1 (
     ECHO "npm run build failed. Exiting."
     EXIT /b 1
 )
+cd ..
 python -m uvicorn main:app --reload

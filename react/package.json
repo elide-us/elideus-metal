@@ -10,7 +10,7 @@
 	"scripts": {
 		"lint": "eslint ./src",
 		"type-check": "tsc --noEmit",
-		"build": "vite build"
+		"build": "vite build --emptyOutDir"
 	},
 	"dependencies": {
 		"@atproto/api": "^0.14.7",
