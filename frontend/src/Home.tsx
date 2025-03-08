@@ -13,7 +13,7 @@ const Home = (): JSX.Element => {
   useEffect(() => {
     const fetchVersion = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/ffmpeg");
+        const response = await axios.get("/api/ffmpeg");
         setFfmpegVersion(response.data.ffmpeg_version);
       } catch (error) {
         console.error("Error fetching ffmpeg version", error);
