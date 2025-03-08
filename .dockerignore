@@ -4,4 +4,4 @@
 .env.example
 .gitignore
 devstart.cmd
-react
+frontend

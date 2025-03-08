@@ -14,6 +14,8 @@ RUN python -m venv $VIRTUAL_ENV && \
     pip install --upgrade pip && \
     pip install --requirement requirements.txt
 
+RUN ls -al ./app/static
+
 RUN chmod +x /app/startup.sh
 
 EXPOSE 8000
