@@ -78,7 +78,7 @@ async def _run(name: str, operations_callback, app: FastAPI, stream_stop_event: 
       async with app.state.pool.acquire() as conn:
         await conn.execute("UPDATE subscription_state SET cursor = $1 WHERE service = $2;", commit.seq, name)
       stream_stop_event.set()
-      client.stop()
+      await client.stop()
       return
     if not commit.blocks:
       return

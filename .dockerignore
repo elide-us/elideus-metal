@@ -1,19 +1,7 @@
-# React & build configuration
-src
-tsconfig.json
-vite.config.ts
-eslint.config.js
-
-# Static assets for React
-index.html
-favicon.ico
-
-# Environment and CI/CD
-.env.example
 .github
-
-# Development and Docker configuration files
+.vscode
+.env
+.env.example
 .gitignore
-Dockerfile
 devstart.cmd
-requirements.txt
+react

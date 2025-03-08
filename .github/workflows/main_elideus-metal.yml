@@ -11,7 +11,27 @@ jobs:
     runs-on: 'ubuntu-latest'
 
     steps:
-    - uses: actions/checkout@v2
+    - name: Stage Source Repository (originally v2)
+      uses: actions/checkout@v4
+
+    - name: Vite Build React Web App
+      run: |
+        cd react
+        npm ci
+        npm run lint
+        npm run type-check
+        npm run build
+
+    # - name: Package Python and React Web App
+    #   run: |
+    #     zip ./release.zip ./* -r -x "venv/*"
+
+    # - name: Stage Release Package
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     name: react-app
+    #     path: |
+    #       release.zip
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2

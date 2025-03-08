@@ -1,4 +1,4 @@
-import asyncio
+import asyncio, os
 from fastapi import FastAPI, APIRouter, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse
@@ -6,7 +6,8 @@ from server.lifespan import lifespan
 import server.algos as algos
 
 app = FastAPI(lifespan=lifespan)
-router = APIRouter()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
 
 @app.get("/")
 async def get_root():
@@ -67,6 +68,8 @@ async def get_xrpc_app_bsky_feed_getFeedSkeleton(request: Request):
 
   return JSONResponse(content=body)
 
+router = APIRouter()
+
 @router.get("/{full_path:path}")
 async def serve_react_app(full_path: str):
   return FileResponse("static/index.html")
@@ -88,6 +91,5 @@ async def get_ffmpeg():
   except Exception as e:
     raise HTTPException(status_code=500, detail="Error checking ffmpeg: {e}")
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
 app.include_router(router)
 app.include_router(router, prefix="/api")
