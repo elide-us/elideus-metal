@@ -6,7 +6,7 @@ from atproto import DidInMemoryCache, IdResolver
 from server.config import VERSION, HOSTNAME, SERVICE_DID, DATABASE_URL, FEED_URI
 from server.algos.feed import handler
 from server.data_stream import sip
-from server.data_filter import operations_callback
+from server.data_filter import imbibe
 from server.database import maybe_create_tables
 
 @asynccontextmanager
@@ -16,6 +16,8 @@ async def lifespan(app: FastAPI):
   app.state.service_did = SERVICE_DID
   app.state.pool = await create_pool(DATABASE_URL)
 
+  await maybe_create_tables(app)
+
   app.state.did_cache = DidInMemoryCache()
   app.state.id_resolver = IdResolver(cache=app.state.did_cache)
   app.state.algos = {
@@ -24,10 +26,9 @@ async def lifespan(app: FastAPI):
 
   app.state.feed_stop_event = Event()
   app.state.feed_task = create_task(
-    sip("elideus_feed_generator", operations_callback, app, app.state.feed_stop_event)
+    sip("elideus_feed_generator", imbibe, app, app.state.feed_stop_event)
   )
 
-  await maybe_create_tables(app)
 
   try:
     yield

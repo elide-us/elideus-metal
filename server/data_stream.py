@@ -12,7 +12,7 @@ INTERESTED_RECORDS = {
 }
 
 # Sip a record from the firehose
-async def sip(name: str, operations_callback, app: FastAPI, stream_stop_event: asyncio.Event) -> None:
+async def sip(name: str, drops_callback, app: FastAPI, stream_stop_event: asyncio.Event) -> None:
   """
     Wrapper function for run that has an event flag for stopping the firehose reader.
 
@@ -22,18 +22,18 @@ async def sip(name: str, operations_callback, app: FastAPI, stream_stop_event: a
   while not stream_stop_event.is_set():
     try:
       # Drink the firehose
-      await drink(name, operations_callback, app, stream_stop_event)
+      await drink(name, drops_callback, app, stream_stop_event)
     except FirehoseError as e:
       # If something goes wrong, sleep for a few seconds and then try run again
       await asyncio.sleep(5)
 
 # Drink the firehose
-async def drink(name: str, operations_callback, app: FastAPI, stream_stop_event: asyncio.Event) -> None:
+async def drink(name: str, drops_callback, app: FastAPI, stream_stop_event: asyncio.Event) -> None:
   """
     Manages the firehose cursor and the AsyncFirehoseSubscribeReposClient
   """
   # Commit sorting logic
-  def _sort_commit_ops(commit: models.ComAtprotoSyncSubscribeRepos.Commit) -> defaultdict:
+  def _sort_aspersion_drops(aspersion: models.ComAtprotoSyncSubscribeRepos.Commit) -> defaultdict:
     """
       Creates a dictionary with two lists, one for create records and another for delete records.
       
@@ -42,47 +42,47 @@ async def drink(name: str, operations_callback, app: FastAPI, stream_stop_event:
 
       These records should be parsed and the posts table in the database should be updated.
     """
-    ops_of_interest = defaultdict(lambda: {'created': [], 'deleted': []})
+    drops_of_interest = defaultdict(lambda: {'created': [], 'deleted': []})
 
-    for op in commit.ops:
+    for drop in aspersion.ops:
       # Ignore "update" operations
-      if op.action == 'update':
+      if drop.action == 'update':
         continue
       
       # Extract the URI and set up the record header for the post
-      commit_uri = AtUri.from_str(f'at://{commit.repo}/{op.path}')
-      create_record_header = {'uri': str(commit_uri), 'cid': str(op.cid), 'author': commit.repo}
+      aspersion_uri = AtUri.from_str(f'at://{aspersion.repo}/{drop.path}')
+      create_droplet_header = {'uri': str(aspersion_uri), 'cid': str(drop.cid), 'author': aspersion.repo}
 
       # Parse "create" operation
-      if op.action == 'create':
-        if not op.cid:
+      if drop.action == 'create':
+        if not drop.cid:
           continue
 
         # Extract the data portion of the CAR object
-        car_blocks = CAR.from_bytes(commit.blocks)
-        record_raw_data = car_blocks.blocks.get(op.cid)
-        if not record_raw_data:
+        car_bytes = CAR.from_bytes(aspersion.blocks)
+        droplet_data = car_bytes.blocks.get(drop.cid)
+        if not droplet_data:
           continue
 
         # Extract record data from the data
-        record = models.get_or_create(record_raw_data, strict=False)
-        if record is None:
+        droplet = models.get_or_create(droplet_data, strict=False)
+        if droplet is None:
           continue
         
         # If the record is of a type we are interested in for our feed, add it to the collection
-        for record_type, record_nsid in INTERESTED_RECORDS.items():
-          if commit_uri.collection == record_nsid and models.is_record_type(record, record_type):
-            ops_of_interest[record_nsid]['created'].append({'record': record, **create_record_header})
+        for droplet_type, droplet_nsid in INTERESTED_RECORDS.items():
+          if aspersion_uri.collection == droplet_nsid and models.is_record_type(droplet, droplet_type):
+            drops_of_interest[droplet_nsid]['created'].append({'record': droplet, **create_droplet_header})
             break
 
       # Parse "delete" operation    
-      elif op.action == 'delete':
-        ops_of_interest[commit_uri.collection]['deleted'].append({'uri': str(commit_uri)})
+      elif drop.action == 'delete':
+        drops_of_interest[aspersion_uri.collection]['deleted'].append({'uri': str(aspersion_uri)})
 
-    return ops_of_interest
+    return drops_of_interest
 
   # Event handler for the firehose commit stream
-  async def _on_message_handler(message: firehose_models.MessageFrame) -> None:
+  async def _stream_handler(message: firehose_models.MessageFrame) -> None:
     """
       Coroutine to parse commits from the firehose.
     """
@@ -92,34 +92,34 @@ async def drink(name: str, operations_callback, app: FastAPI, stream_stop_event:
       return
     
     # Capture a message off the firehose
-    commit = parse_subscribe_repos_message(message)
+    aspersion = parse_subscribe_repos_message(message)
 
     # If this is not a commit, return
-    if not isinstance(commit, models.ComAtprotoSyncSubscribeRepos.Commit):
+    if not isinstance(aspersion, models.ComAtprotoSyncSubscribeRepos.Commit):
       return
     
     # Parse some number of events (this parses 1)
-    if commit.seq % 1 == 0:
+    if aspersion.seq % 1 == 0:
       # Update the firehose client with the new cursor
-      client.update_params(models.ComAtprotoSyncSubscribeRepos.Params(cursor=commit.seq))
+      client.update_params(models.ComAtprotoSyncSubscribeRepos.Params(cursor=aspersion.seq))
 
       # Update the database with the new cursor number
       async with app.state.pool.acquire() as conn:
-        await conn.execute("UPDATE subscription_state SET cursor = $1 WHERE service = $2;", commit.seq, name)
+        await conn.execute("UPDATE subscription_state SET cursor = $1 WHERE service = $2;", aspersion.seq, name)
 
       # Set the stop stream event, the next loop should exit      
       stream_stop_event.set()
       return
     
     # If there are no blocks in the commit, return
-    if not commit.blocks:
+    if not aspersion.blocks:
       return
     
     # Parse out the create and delete operations from this commit
-    ops = _sort_commit_ops(commit)
+    ops = _sort_aspersion_drops(aspersion)
 
     # Call the operations parser coroutine
-    await operations_callback(ops, app)
+    await drops_callback(ops, app)
 
   # Get the latest cursor record from the database
   try:
@@ -138,4 +138,4 @@ async def drink(name: str, operations_callback, app: FastAPI, stream_stop_event:
   client = AsyncFirehoseSubscribeReposClient(params)
 
   # Start the client
-  await client.start(_on_message_handler)
+  await client.start(_stream_handler)
