@@ -51,7 +51,7 @@ async def drink(name: str, drops_callback, app: FastAPI, stream_stop_event: asyn
       
       # Extract the URI and set up the record header for the post
       aspersion_uri = AtUri.from_str(f'at://{aspersion.repo}/{drop.path}')
-      create_droplet_header = {'uri': str(aspersion_uri), 'cid': str(drop.cid), 'author': aspersion.repo}
+      droplet_header = {'uri': str(aspersion_uri), 'cid': str(drop.cid), 'author': aspersion.repo}
 
       # Parse "create" operation
       if drop.action == 'create':
@@ -72,7 +72,7 @@ async def drink(name: str, drops_callback, app: FastAPI, stream_stop_event: asyn
         # If the record is of a type we are interested in for our feed, add it to the collection
         for droplet_type, droplet_nsid in INTERESTED_RECORDS.items():
           if aspersion_uri.collection == droplet_nsid and models.is_record_type(droplet, droplet_type):
-            drops_of_interest[droplet_nsid]['created'].append({'record': droplet, **create_droplet_header})
+            drops_of_interest[droplet_nsid]['created'].append({'record': droplet, **droplet_header})
             break
 
       # Parse "delete" operation    

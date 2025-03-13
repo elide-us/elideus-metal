@@ -18,6 +18,7 @@ async def lifespan(app: FastAPI):
 
   await maybe_create_tables(app)
 
+  # This DidInMemoryCache probably needs maintenance
   app.state.did_cache = DidInMemoryCache()
   app.state.id_resolver = IdResolver(cache=app.state.did_cache)
   app.state.algos = {
