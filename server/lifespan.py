@@ -16,9 +16,6 @@ async def lifespan(app: FastAPI):
   app.state.service_did = SERVICE_DID
   app.state.pool = await create_pool(DATABASE_URL)
 
-  await maybe_create_tables(app)
-
-  # This DidInMemoryCache probably needs maintenance
   app.state.did_cache = DidInMemoryCache()
   app.state.id_resolver = IdResolver(cache=app.state.did_cache)
   app.state.algos = {
@@ -30,6 +27,7 @@ async def lifespan(app: FastAPI):
     sip("elideus_feed_generator", imbibe, app, app.state.feed_stop_event)
   )
 
+  await maybe_create_tables(app)
 
   try:
     yield
