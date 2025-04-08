@@ -4,7 +4,7 @@ from fastapi import FastAPI, HTTPException
 
 class PostModel(BaseModel):
   uri: str
-  cid: str
+  cdi: str
   reply_parent: str | None = None
   reply_root: str | None = None
   indexed_at: datetime
@@ -41,7 +41,7 @@ async def maybe_create_tables(app: FastAPI):
       raise
 
 # @app.post("/posts", response_model=PostModel)
-async def insert_post(app: FastAPI, post: PostModel):
+async def create_post(app: FastAPI, post: PostModel):
   async with app.state.pool.acquire() as conn:
     query = """
       INSERT INTO post (uri, cid, reply_parent, reply_root, indexed_at)
