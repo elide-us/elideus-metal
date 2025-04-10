@@ -11,20 +11,20 @@ jobs:
     runs-on: 'ubuntu-latest'
 
     steps:
-    - name: Stage Source Repository
+    - name: Stage Source Code
       uses: actions/checkout@v2
 
-    - name: Set up Docker Buildx
+    - name: Setup Docker Buildx
       uses: docker/setup-buildx-action@v2
 
-    - name: Log in to registry
+    - name: Login to Azure Container Registry
       uses: docker/login-action@v2
       with:
         registry: https://elideus.azurecr.io/
         username: ${{ secrets.AzureAppService_ContainerUsername_923a9c64f7a243219bf38af9c16b4009 }}
         password: ${{ secrets.AzureAppService_ContainerPassword_a784b5c25cd349e6832729bfc555979c }}
 
-    - name: Build and push container image to registry
+    - name: Build and Push Dockerfile
       uses: docker/build-push-action@v3
       with:
         push: true
