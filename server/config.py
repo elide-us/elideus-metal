@@ -12,8 +12,8 @@ def _get_bool_env_var(var_name: str) -> bool:
   value = os.getenv(var_name)
   if value is None:
      return False
-  normalized_vaue = value.strip().lower()
-  if normalized_vaue in {"1", "true", "t", "yes", "y"}:
+  normalized_value = value.strip().lower()
+  if normalized_value in {"1", "true", "t", "yes", "y"}:
      return True
   return False
 
@@ -34,4 +34,4 @@ IGNORE_REPLY_POSTS = _get_bool_env_var("IGNORE_REPLY_POSTS")
 
 DATABASE_URL = _get_str_env_var("DATABASE_URL")
 if not DATABASE_URL:
-   raise RuntimeError("You must set 'DATABASE_URL' environment variable.")
+  raise RuntimeError("You must set 'DATABASE_URL' environment variable.")

@@ -50,13 +50,13 @@ async def operations_callback(ops: defaultdict, app: FastAPI) -> None:
   posts_to_delete = [post["uri"] for post in deleted_posts] if deleted_posts else []
   async with app.state.pool.acquire() as conn:
     query_insert = """
-      INSERT INTO posts (uri, cid, reply_parent, reply_root)
+      INSERT INTO post (uri, cid, reply_parent, reply_root)
       VALUES ($1, $2, $3, $4);
     """
     query_delete = """
-      DELETE FROM posts WHERE uri = ANY($1::text[]);
+      DELETE FROM post WHERE uri = ANY($1::text[]);
     """
     if posts_to_delete:
       await conn.execute(query_delete, posts_to_delete)
     for post in posts_to_create:
-      await conn.execute(query_insert, post["uri"], post["cid"], post["reply_paret"], post["reply_root"])
+      await conn.execute(query_insert, post["uri"], post["cid"], post["reply_parent"], post["reply_root"])
