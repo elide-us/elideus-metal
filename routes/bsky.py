@@ -32,10 +32,9 @@ async def get_xrpc_app_bsky_feed_describeFeedGenerator(request: Request):
   return response
 
 @router.get("/xrpc/app.bsky.feed.getFeedSkeleton")
-async def get_xrpc_app_bsky_feed_getFeedSkeleton(request: Request):
-  # Retrieve the 'feed' query parameter
-  feed = request.args.get('feed', None)
-  algo = algos.get(feed)
+async def get_feed_skeleton(request: Request):
+  feed = request.query_params.get('feed')
+  algo = request.app.state.algos.get(feed)
   if not algo:
     raise HTTPException(status_code=400, detail="Unsupported algorithm")
 
@@ -48,8 +47,8 @@ async def get_xrpc_app_bsky_feed_getFeedSkeleton(request: Request):
   #     raise HTTPException(status_code=401, detail="Unauthorized")
 
   try:
-    cursor = request.args.get('cursor', None)
-    limit = int(request.args.get('limit', 20))
+    cursor = request.query_params.get('cursor')
+    limit = int(request.query_params.get('limit', 20))
     # If the algorithm function is asynchronous, await its result.
     if asyncio.iscoroutinefunction(algo):
       body = await algo(cursor, limit)

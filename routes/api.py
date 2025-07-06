@@ -18,4 +18,4 @@ async def get_ffmpeg():
       version_line = stderr.decode().splitlines()[0]
     return {"ffmpeg_version": version_line}
   except Exception as e:
-    raise HTTPException(status_code=500, detail="Error checking ffmpeg: {e}")
+    raise HTTPException(status_code=500, detail=f"Error checking ffmpeg: {e}")

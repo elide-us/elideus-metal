@@ -4,7 +4,7 @@ from fastapi import FastAPI, HTTPException
 
 class PostModel(BaseModel):
   uri: str
-  cdi: str
+  cid: str
   reply_parent: str | None = None
   reply_root: str | None = None
   indexed_at: datetime
